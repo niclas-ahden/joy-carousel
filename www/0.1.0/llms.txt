@@ -1,0 +1,114 @@
+# LLM Docs
+
+## Compact Docs
+
+Copy just this section if you want to keep your context small.
+If you want all docs, check the section `Full Docs per Module` below.
+
+Carousel.default_config : Config
+Carousel.init : Config, U64 -> Result State InitError
+Carousel.encode_event : [ TouchStart, TouchMove, TouchEnd, MouseDown, MouseMove, MouseUp, MouseLeave, PrevSlide, NextSlide, GoToSlide U64 ] -> Str
+Carousel.decode_event : Str, List U8 -> Result Event [UnknownEvent Str]
+Carousel.update : State, Event -> State
+Carousel.calculate_slide_width : F64 -> F64
+Carousel.calculate_transform : { active_index : U64, slides_per_view : F64, is_dragging : Bool, drag_offset_px : F64 } -> Str
+Carousel.calculate_transition : Bool, U64 -> Str
+Carousel.nav_button_class : Str, Bool -> Str
+Carousel.view : { state : State, id : Str, slides : List (Html state) } -> Html state
+
+## Full Docs per Module
+### Carousel
+
+Description:
+Carousel configuration options.
+
+```
+config = { Carousel.default_config & navigation: Bool.true, drag_threshold_px: 100 }
+```
+
+- `slides_per_view`: Number of slides visible at once. Use `1.0` for full-width slides,
+  `2.0` for half-width, or `1.5` to show a partial next slide as a preview.
+- `initial_slide`: Zero-indexed starting slide.
+- `navigation`: Show prev/next buttons.
+- `drag_threshold_px`: Minimum drag distance in pixels before a swipe registers.
+- `animation_duration_ms`: Slide transition duration in milliseconds.
+
+
+default_config : Config
+
+Description:
+Default configuration: 1 slide per view, no navigation buttons, 50px drag threshold, 300ms animation.
+
+Description:
+Create with [init], update with [update], render with [view].
+
+Description:
+Errors returned by [init] for invalid configuration.
+
+init : Config, U64 -> Result State InitError
+
+Description:
+Create carousel state for the given number of slides.
+
+```
+when Carousel.init(config, List.len(slides)) is
+    Ok(state) -> { carousel_state: state }
+    Err(NoSlides) -> crash "Need at least one slide"
+    Err(_) -> crash "Invalid config"
+```
+
+Description:
+Carousel events. Decoded from DOM events via [decode_event].
+
+encode_event : [ TouchStart, TouchMove, TouchEnd, MouseDown, MouseMove, MouseUp, MouseLeave, PrevSlide, NextSlide, GoToSlide U64 ] -> Str
+
+Description:
+Encode an event type to a handler string for use with joy-html event attributes.
+Used internally by [view].
+
+decode_event : Str, List U8 -> Result Event [UnknownEvent Str]
+
+Description:
+Decode a carousel event from the Joy event name and payload.
+
+```
+when Carousel.decode_event(event_name, payload) is
+    Ok(event) -> Action.update({ model & carousel_state: Carousel.update(model.carousel_state, event) })
+    Err(_) -> Action.none
+```
+
+update : State, Event -> State
+
+Description:
+Apply an event to the carousel state, returning the new state.
+
+calculate_slide_width : F64 -> F64
+
+Description:
+Calculate slide width as a percentage. Exported for testing.
+
+calculate_transform : { active_index : U64, slides_per_view : F64, is_dragging : Bool, drag_offset_px : F64 } -> Str
+
+Description:
+Calculate the CSS transform for the carousel wrapper. Exported for testing.
+
+calculate_transition : Bool, U64 -> Str
+
+Description:
+Calculate the CSS transition. Exported for testing.
+
+nav_button_class : Str, Bool -> Str
+
+Description:
+Calculate navigation button CSS class. Exported for testing.
+
+view : { state : State, id : Str, slides : List (Html state) } -> Html state
+
+Description:
+Render the carousel.
+
+```
+slide_content = List.map(slides, |s| div([], [text(s)]))
+Carousel.view({ state: model.carousel_state, id: "my-carousel", slides: slide_content })
+```
+

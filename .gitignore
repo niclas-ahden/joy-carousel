@@ -1,0 +1,18 @@
+# Ignore generated binaries (with no extension) by default
+*
+!*.*
+!*/
+
+# Allow joy submodule
+!joy
+
+.direnv/
+.envrc
+generated-docs/
+
+# Build artifacts
+app.o
+libapp.a
+*.ll
+tests/app/www/pkg/
+tests/app/server/main

@@ -1,0 +1,108 @@
+.carousel {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.carousel-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+}
+
+.carousel-slide {
+    flex-shrink: 0;
+    height: 100%;
+    position: relative;
+}
+
+/* Navigation buttons */
+.carousel-button-prev,
+.carousel-button-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--carousel-navigation-color, #007aff);
+}
+
+.carousel-button-prev {
+    left: 10px;
+}
+
+.carousel-button-next {
+    right: 10px;
+}
+
+.carousel-button-prev::after,
+.carousel-button-next::after {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.carousel-button-prev::after {
+    content: '\2039';
+}
+
+.carousel-button-next::after {
+    content: '\203a';
+}
+
+.carousel-button-disabled {
+    opacity: 0.35;
+    cursor: auto;
+    pointer-events: none;
+}
+
+/* Pagination */
+.carousel-pagination {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+}
+
+.carousel-pagination-bullet {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    border-radius: 50%;
+    background: var(--carousel-pagination-color, #000);
+    opacity: 0.2;
+    cursor: pointer;
+}
+
+.carousel-pagination-bullet-active {
+    opacity: 1;
+    background: var(--carousel-pagination-bullet-active-color, var(--carousel-pagination-color, #007aff));
+}
+
+/* Scrollbar */
+.carousel-scrollbar {
+    position: absolute;
+    bottom: 3px;
+    left: 1%;
+    width: 98%;
+    height: 5px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.carousel-scrollbar-drag {
+    height: 100%;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.5);
+}
