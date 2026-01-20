@@ -8,7 +8,7 @@ A carousel/slider component for [Joy](https://github.com/niclas-ahden/joy) appli
 app [Model, init!, update!, render] {
     pf: platform "../joy/main.roc", # Joy doesn't have releases, and must be vendored in your project
     html: "https://github.com/niclas-ahden/joy-html/releases/download/0.11.0/7rgWAa6Gu3IGfdGl1JKxHQyCBVK9IUbZXbDui0jIZSQ.tar.br",
-    carousel: "https://github.com/niclas-ahden/joy-carousel/releases/download/0.1.0/XXXXXX.tar.br",
+    carousel: "https://github.com/niclas-ahden/joy-carousel/releases/download/0.1.0/xCFoGhzq7hvFUSUeWiXRvaiMFxO9FWzONVL7-MwxZNE.tar.br",
 }
 
 import html.Html exposing [div, text]
