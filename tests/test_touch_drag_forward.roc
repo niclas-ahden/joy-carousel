@@ -37,13 +37,13 @@ main! = |_args|
 
             Playwright.navigate!(page, base_url)?
 
-            Playwright.wait_for_selector!(page, "text=Carousel Test")?
-            Playwright.wait_for_selector!(page, ".carousel")?
-            Playwright.wait_for_selector!(page, "text=Slide 1")?
-            Playwright.wait_for_selector!(page, "text=Active slide: 0")?
+            Playwright.wait_for!(page, "#games", Visible)?
+
+            # Verify we start at first slide (prev disabled)
+            Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
 
             # Get the carousel element's bounding box for dynamic positioning
-            box = Playwright.bounding_box!(page, ".carousel")?
+            box = Playwright.bounding_box!(page, "#games")?
             center_x = box.x + (box.width / 2.0)
             center_y = box.y + (box.height / 2.0)
 
@@ -56,7 +56,8 @@ main! = |_args|
                 end_y: center_y,
             })?
 
-            Playwright.wait_for_selector!(page, "text=Active slide: 1")?
+            # Verify we advanced (prev no longer disabled)
+            Playwright.wait_for!(page, "#games .carousel-button-prev:not(.carousel-button-disabled)", Visible)?
 
             Playwright.close!(browser),
     )

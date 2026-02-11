@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Carousel - Documentation</title>
+    <!-- <meta name="description" content="TODO populate this based on the module's description"> -->
+    <meta name="viewport" content="width=device-width" />
+    <base href="/joy-carousel/0.2.0/" />
+    <script type="text/javascript" src="search.js" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="/favicon.svg" />
+    <!-- Safari ignores rel="icon" and only respects rel="mask-icon". It will render the SVG with
+    fill="#000" unless this `color` attribute here is hardcoded (not a CSS `var()`) to override it.
+  -->
+    <link rel="mask-icon" href="/favicon.svg" color="#7d59dd" />
+    <link rel="prefetch" href="Carousel"/>
+</head>
+
+<body>
+    <nav id="sidebar-nav">
+        <div class="pkg-and-logo">
+            <a class="logo" href="/" aria-labelledby="logo-link">
+                <svg viewBox="0 -6 51 58" fill="none" xmlns="http://www.w3.org/2000/svg" aria-labelledby="logo-link"
+                    role="img">
+                    <title id="logo-link">Return to Roc packages</title>
+                    <polygon role="presentation"
+                        points="0,0 23.8834,3.21052 37.2438,19.0101 45.9665,16.6324 50.5,22 45,22 44.0315,26.3689 26.4673,39.3424 27.4527,45.2132 17.655,53 23.6751,22.7086" />
+                </svg>
+            </a>
+            <h1 class="pkg-full-name" ><a href="/joy-carousel/0.2.0/" >Documentation</a></h1>
+            <button class="menu-toggle" aria-label="Toggle sidebar">
+                <svg viewBox="0 0 72 72" id="emoji" xmlns="http://www.w3.org/2000/svg" fill="currentcolor">
+                    <g id="SVGRepo_iconCarrier">
+                        <g id="color"></g>
+                        <g id="hair"></g>
+                        <g id="skin"></g>
+                        <g id="skin-shadow"></g>
+                        <g id="line">
+                            <line x1="16" x2="56" y1="26" y2="26" fill="none" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+                            </line>
+                            <line x1="16" x2="56" y1="36" y2="36" fill="none" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+                            </line>
+                            <line x1="16" x2="56" y1="46" y2="46" fill="none" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+                            </line>
+                        </g>
+                    </g>
+                </svg>
+            </button>
+        </div>
+        <div class="module-links-container">
+            <div class="module-links">
+                <div class="sidebar-entry" ><a class="sidebar-module-link" href="Carousel" data-module-name="Carousel" ><span >Carousel</span><button class="entry-toggle" >▶</button></a><div class="sidebar-sub-entries" ><a href="Carousel#Config" >Config</a><a href="Carousel#default_config" >default_config</a><a href="Carousel#State" >State</a><a href="Carousel#InitError" >InitError</a><a href="Carousel#init" >init</a><a href="Carousel#Event" >Event</a><a href="Carousel#encode_event" >encode_event</a><a href="Carousel#decode_event" >decode_event</a><a href="Carousel#update" >update</a><a href="Carousel#calculate_slide_width" >calculate_slide_width</a><a href="Carousel#calculate_transform" >calculate_transform</a><a href="Carousel#calculate_transition" >calculate_transition</a><a href="Carousel#nav_button_class" >nav_button_class</a><a href="Carousel#view" >view</a></div></div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <form id="module-search-form">
+            <button class="menu-toggle" aria-label="Toggle sidebar">
+                <svg viewBox="0 0 72 72" id="emoji" xmlns="http://www.w3.org/2000/svg" fill="currentcolor">
+                    <g id="SVGRepo_iconCarrier">
+                        <g id="color"></g>
+                        <g id="hair"></g>
+                        <g id="skin"></g>
+                        <g id="skin-shadow"></g>
+                        <g id="line">
+                            <line x1="16" x2="56" y1="26" y2="26" fill="none" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+                            </line>
+                            <line x1="16" x2="56" y1="36" y2="36" fill="none" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+                            </line>
+                            <line x1="16" x2="56" y1="46" y2="46" fill="none" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+                            </line>
+                        </g>
+                    </g>
+                </svg>
+            </button>
+            <input id="module-search" aria-labelledby="search-label" type="text"
+                placeholder="Search Documentation" role="combobox" aria-autocomplete="list"
+                aria-expanded="false" aria-controls="search-type-ahead" />
+            <label for="module-search" id="search-label">(press
+                <span id="search-shortcut-key" aria-hidden="true">s</span>)</label>
+            <!-- Magnifying Glass icon -->
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" class="search-icon"
+                xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 512 512"
+                xml:space="preserve">
+                <g>
+                    <path d="M449.803,62.197C408.443,20.807,353.85-0.037,299.646-0.006C245.428-0.037,190.85,20.807,149.49,62.197
+		C108.1,103.557,87.24,158.15,87.303,212.338c-0.047,37.859,10.359,75.766,30.547,109.359L15.021,424.525
+		c-20.016,20.016-20.016,52.453,0,72.469c20,20.016,52.453,20.016,72.453,0L190.318,394.15
+		c33.578,20.203,71.5,30.594,109.328,30.547c54.203,0.047,108.797-20.797,150.156-62.188
+		c41.375-41.359,62.234-95.938,62.188-150.172C512.053,158.15,491.178,103.557,449.803,62.197z M391.818,304.541
+		c-25.547,25.531-58.672,38.125-92.172,38.188c-33.5-0.063-66.609-12.656-92.188-38.188c-25.531-25.578-38.125-58.688-38.188-92.203
+		c0.063-33.484,12.656-66.609,38.188-92.172c25.578-25.531,58.688-38.125,92.188-38.188c33.5,0.063,66.625,12.656,92.188,38.188
+		c25.531,25.563,38.125,58.688,38.188,92.172C429.959,245.854,417.365,278.963,391.818,304.541z"></path>
+                </g>
+            </svg>
+            <ul id="search-type-ahead" role="listbox" aria-label="Search Results" class="hidden">
+                <li role="option" ><a href="Carousel#Config" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >Config</span></a></li><li role="option" ><a href="Carousel#default_config" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >default_config</span><span class="type-ahead-signature" > : Config</span></a></li><li role="option" ><a href="Carousel#State" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >State</span></a></li><li role="option" ><a href="Carousel#InitError" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >InitError</span></a></li><li role="option" ><a href="Carousel#init" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >init</span><span class="type-ahead-signature" > :     
+    {
+        id : Str,
+        config : Config,
+        slide_count : U64
+    }
+    -> Result State InitError</span></a></li><li role="option" ><a href="Carousel#Event" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >Event</span></a></li><li role="option" ><a href="Carousel#encode_event" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >encode_event</span><span class="type-ahead-signature" > : 
+    State,     
+    [
+        PrevSlide,
+        NextSlide,
+        GoToSlide U64
+    ]
+    -> Str</span></a></li><li role="option" ><a href="Carousel#decode_event" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >decode_event</span><span class="type-ahead-signature" > : 
+    Str, 
+    List U8
+    -> Result 
+        {
+            id : Str,
+            event : Event
+        } [UnknownEvent Str]</span></a></li><li role="option" ><a href="Carousel#update" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >update</span><span class="type-ahead-signature" > : State, Event -> State</span></a></li><li role="option" ><a href="Carousel#calculate_slide_width" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >calculate_slide_width</span><span class="type-ahead-signature" > : F64 -> F64</span></a></li><li role="option" ><a href="Carousel#calculate_transform" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >calculate_transform</span><span class="type-ahead-signature" > :     
+    {
+        active_index : U64,
+        slides_per_view : F64,
+        is_dragging : Bool,
+        drag_offset_px : F64
+    }
+    -> Str</span></a></li><li role="option" ><a href="Carousel#calculate_transition" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >calculate_transition</span><span class="type-ahead-signature" > : Bool, U64 -> Str</span></a></li><li role="option" ><a href="Carousel#nav_button_class" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >nav_button_class</span><span class="type-ahead-signature" > : Str, Bool -> Str</span></a></li><li role="option" ><a href="Carousel#view" class="type-ahead-link" ><span class="type-ahead-module-name" >Carousel</span><span class="type-ahead-module-dot" >.</span><span class="type-ahead-def-name" >view</span><span class="type-ahead-signature" > : State, List (Html state) -> Html state</span></a></li>
+            </ul>
+        </form>
+        <h2 class="module-name" ><a href="/" >Carousel</a></h2><section><h3 id="Config" class="entry-name" ><a href="Carousel#Config" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="upperident">Config</span></code></h3><p>Carousel configuration options.</p>
+<pre><samp><span class="lowerident">config</span><span class="kw"> =</span><span class="delimiter"> {</span><span class="upperident"> Carousel</span><span class="delimiter">.</span><span class="lowerident">default</span><span class="lowerident">_</span><span class="lowerident">config</span><span class="kw"> &amp;</span><span class="lowerident"> navigation</span><span class="kw">:</span><span class="upperident"> Bool</span><span class="delimiter">.</span><span class="lowerident">true</span><span class="delimiter">,</span><span class="lowerident"> drag</span><span class="lowerident">_</span><span class="lowerident">threshold</span><span class="lowerident">_</span><span class="lowerident">px</span><span class="kw">:</span><span class="literal"> 100</span><span class="delimiter"> }</span></samp></pre></code></pre>
+<ul>
+<li><code>slides_per_view</code>: Number of slides visible at once. Use <code>1.0</code> for full-width slides,
+<code>2.0</code> for half-width, or <code>1.5</code> to show a partial next slide as a preview.</li>
+<li><code>initial_slide</code>: Zero-indexed starting slide.</li>
+<li><code>navigation</code>: Show prev/next buttons.</li>
+<li><code>drag_threshold_px</code>: Minimum drag distance in pixels before a swipe registers.</li>
+<li><code>animation_duration_ms</code>: Slide transition duration in milliseconds.</li>
+</ul>
+</section><section><h3 id="default_config" class="entry-name" ><a href="Carousel#default_config" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">default</span><span class="lowerident">_</span><span class="lowerident">config</span><span class="kw"> :</span><span class="upperident"> Config</span></code></h3><p>Default configuration: 1 slide per view, no navigation buttons, 50px drag threshold, 300ms animation.</p>
+</section><section><h3 id="State" class="entry-name" ><a href="Carousel#State" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="upperident">State</span></code></h3><p>Create with <a href="/joy-carousel/0.2.0/Carousel#init" title="Docs for Carousel.init"><code>init</code></a>, update with <a href="/joy-carousel/0.2.0/Carousel#update" title="Docs for Carousel.update"><code>update</code></a>, render with <a href="/joy-carousel/0.2.0/Carousel#view" title="Docs for Carousel.view"><code>view</code></a>.</p>
+</section><section><h3 id="InitError" class="entry-name" ><a href="Carousel#InitError" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="upperident">InitError</span></code></h3><p>Errors returned by <a href="/joy-carousel/0.2.0/Carousel#init" title="Docs for Carousel.init"><code>init</code></a> for invalid configuration.</p>
+</section><section><h3 id="init" class="entry-name" ><a href="Carousel#init" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">init</span><span class="kw"> :</span><span class="delimiter">     
+    {</span><span class="lowerident">
+        id</span><span class="kw"> :</span><span class="upperident"> Str</span><span class="delimiter">,</span><span class="lowerident">
+        config</span><span class="kw"> :</span><span class="upperident"> Config</span><span class="delimiter">,</span><span class="lowerident">
+        slide</span><span class="lowerident">_</span><span class="lowerident">count</span><span class="kw"> :</span><span class="upperident"> U64</span><span class="delimiter">
+    }</span><span class="kw">
+    -&gt;</span><span class="upperident"> Result</span><span class="upperident"> State</span><span class="upperident"> InitError</span></code></h3><p>Create carousel state for the given number of slides.
+The <code>id</code> is validated to not contain <code>|</code> and is stored in the state
+for use by <a href="/joy-carousel/0.2.0/Carousel#view" title="Docs for Carousel.view"><code>view</code></a> and <a href="/joy-carousel/0.2.0/Carousel#encode_event" title="Docs for Carousel.encode_event"><code>encode_event</code></a>.</p>
+<pre><samp><span class="kw">when</span><span class="upperident"> Carousel</span><span class="delimiter">.</span><span class="lowerident">init</span><span class="delimiter">(</span><span class="delimiter">{</span><span class="lowerident"> id</span><span class="kw">:</span><span class="literal"> "my-carousel"</span><span class="delimiter">,</span><span class="lowerident"> config</span><span class="delimiter">,</span><span class="lowerident"> slide</span><span class="lowerident">_</span><span class="lowerident">count</span><span class="kw">:</span><span class="upperident"> List</span><span class="delimiter">.</span><span class="lowerident">len</span><span class="delimiter">(</span><span class="lowerident">slides</span><span class="delimiter">)</span><span class="delimiter"> }</span><span class="delimiter">)</span><span class="kw"> is</span><span class="upperident">
+    Ok</span><span class="delimiter">(</span><span class="lowerident">state</span><span class="delimiter">)</span><span class="kw"> -&gt;</span><span class="delimiter"> {</span><span class="lowerident"> carousel</span><span class="lowerident">_</span><span class="lowerident">state</span><span class="kw">:</span><span class="lowerident"> state</span><span class="delimiter"> }</span><span class="upperident">
+    Err</span><span class="delimiter">(</span><span class="upperident">NoSlides</span><span class="delimiter">)</span><span class="kw"> -&gt;</span><span class="kw"> crash</span><span class="literal"> "Need at least one slide"</span><span class="upperident">
+    Err</span><span class="delimiter">(</span><span class="lowerident">_</span><span class="delimiter">)</span><span class="kw"> -&gt;</span><span class="kw"> crash</span><span class="literal"> "Invalid config"</span></samp></pre></code></pre>
+</section><section><h3 id="Event" class="entry-name" ><a href="Carousel#Event" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="upperident">Event</span></code></h3><p>Carousel events. Decoded from DOM events via <a href="/joy-carousel/0.2.0/Carousel#decode_event" title="Docs for Carousel.decode_event"><code>decode_event</code></a>.</p>
+</section><section><h3 id="encode_event" class="entry-name" ><a href="Carousel#encode_event" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">encode</span><span class="lowerident">_</span><span class="lowerident">event</span><span class="kw"> :</span><span class="upperident"> 
+    State</span><span class="delimiter">,</span><span class="delimiter">     
+    [</span><span class="upperident">
+        PrevSlide</span><span class="delimiter">,</span><span class="upperident">
+        NextSlide</span><span class="delimiter">,</span><span class="upperident">
+        GoToSlide</span><span class="upperident"> U64</span><span class="delimiter">
+    ]</span><span class="kw">
+    -&gt;</span><span class="upperident"> Str</span></code></h3><p>Encode a navigation event to a handler string for use with joy-html event attributes.
+For custom navigation buttons rendered outside of <a href="/joy-carousel/0.2.0/Carousel#view" title="Docs for Carousel.view"><code>view</code></a>.
+The carousel ID (validated at <a href="/joy-carousel/0.2.0/Carousel#init" title="Docs for Carousel.init"><code>init</code></a>) is read from the state.</p>
+<pre><samp><span class="upperident">HtmlEvent</span><span class="delimiter">.</span><span class="lowerident">on</span><span class="lowerident">_</span><span class="lowerident">click</span><span class="delimiter">(</span><span class="upperident">Carousel</span><span class="delimiter">.</span><span class="lowerident">encode</span><span class="lowerident">_</span><span class="lowerident">event</span><span class="delimiter">(</span><span class="lowerident">model</span><span class="delimiter">.</span><span class="lowerident">carousel</span><span class="lowerident">_</span><span class="lowerident">state</span><span class="delimiter">,</span><span class="upperident"> PrevSlide</span><span class="delimiter">)</span><span class="delimiter">)</span></samp></pre></code></pre>
+</section><section><h3 id="decode_event" class="entry-name" ><a href="Carousel#decode_event" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">decode</span><span class="lowerident">_</span><span class="lowerident">event</span><span class="kw"> :</span><span class="upperident"> 
+    Str</span><span class="delimiter">,</span><span class="upperident"> 
+    List</span><span class="upperident"> U8</span><span class="kw">
+    -&gt;</span><span class="upperident"> Result</span><span class="delimiter"> 
+        {</span><span class="lowerident">
+            id</span><span class="kw"> :</span><span class="upperident"> Str</span><span class="delimiter">,</span><span class="lowerident">
+            event</span><span class="kw"> :</span><span class="upperident"> Event</span><span class="delimiter">
+        }</span><span class="delimiter"> [</span><span class="upperident">UnknownEvent</span><span class="upperident"> Str</span><span class="delimiter">]</span></code></h3><p>Decode a carousel event from the Joy event name and payload.
+Returns both the carousel ID and the event, allowing apps with multiple carousels
+to route events to the correct instance.</p>
+<pre><samp><span class="kw">when</span><span class="upperident"> Carousel</span><span class="delimiter">.</span><span class="lowerident">decode</span><span class="lowerident">_</span><span class="lowerident">event</span><span class="delimiter">(</span><span class="lowerident">event</span><span class="lowerident">_</span><span class="lowerident">name</span><span class="delimiter">,</span><span class="lowerident"> payload</span><span class="delimiter">)</span><span class="kw"> is</span><span class="upperident">
+    Ok</span><span class="delimiter">(</span><span class="delimiter">{</span><span class="lowerident"> id</span><span class="delimiter">,</span><span class="lowerident"> event</span><span class="delimiter"> }</span><span class="delimiter">)</span><span class="kw"> -&gt;</span><span class="upperident"> Action</span><span class="delimiter">.</span><span class="lowerident">update</span><span class="delimiter">(</span><span class="delimiter">{</span><span class="lowerident"> model</span><span class="kw"> &amp;</span><span class="lowerident"> carousel</span><span class="lowerident">_</span><span class="lowerident">state</span><span class="kw">:</span><span class="upperident"> Carousel</span><span class="delimiter">.</span><span class="lowerident">update</span><span class="delimiter">(</span><span class="lowerident">model</span><span class="delimiter">.</span><span class="lowerident">carousel</span><span class="lowerident">_</span><span class="lowerident">state</span><span class="delimiter">,</span><span class="lowerident"> event</span><span class="delimiter">)</span><span class="delimiter"> }</span><span class="delimiter">)</span><span class="upperident">
+    Err</span><span class="delimiter">(</span><span class="lowerident">_</span><span class="delimiter">)</span><span class="kw"> -&gt;</span><span class="upperident"> Action</span><span class="delimiter">.</span><span class="lowerident">none</span></samp></pre></code></pre>
+</section><section><h3 id="update" class="entry-name" ><a href="Carousel#update" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">update</span><span class="kw"> :</span><span class="upperident"> State</span><span class="delimiter">,</span><span class="upperident"> Event</span><span class="kw"> -&gt;</span><span class="upperident"> State</span></code></h3><p>Apply an event to the carousel state, returning the new state.</p>
+</section><section><h3 id="calculate_slide_width" class="entry-name" ><a href="Carousel#calculate_slide_width" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">calculate</span><span class="lowerident">_</span><span class="lowerident">slide</span><span class="lowerident">_</span><span class="lowerident">width</span><span class="kw"> :</span><span class="upperident"> F64</span><span class="kw"> -&gt;</span><span class="upperident"> F64</span></code></h3><p>Calculate slide width as a percentage. Exported for testing.</p>
+</section><section><h3 id="calculate_transform" class="entry-name" ><a href="Carousel#calculate_transform" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">calculate</span><span class="lowerident">_</span><span class="lowerident">transform</span><span class="kw"> :</span><span class="delimiter">     
+    {</span><span class="lowerident">
+        active</span><span class="lowerident">_</span><span class="lowerident">index</span><span class="kw"> :</span><span class="upperident"> U64</span><span class="delimiter">,</span><span class="lowerident">
+        slides</span><span class="lowerident">_</span><span class="lowerident">per</span><span class="lowerident">_</span><span class="lowerident">view</span><span class="kw"> :</span><span class="upperident"> F64</span><span class="delimiter">,</span><span class="kw">
+        is</span><span class="lowerident">_</span><span class="lowerident">dragging</span><span class="kw"> :</span><span class="upperident"> Bool</span><span class="delimiter">,</span><span class="lowerident">
+        drag</span><span class="lowerident">_</span><span class="lowerident">offset</span><span class="lowerident">_</span><span class="lowerident">px</span><span class="kw"> :</span><span class="upperident"> F64</span><span class="delimiter">
+    }</span><span class="kw">
+    -&gt;</span><span class="upperident"> Str</span></code></h3><p>Calculate the CSS transform for the carousel wrapper. Exported for testing.</p>
+</section><section><h3 id="calculate_transition" class="entry-name" ><a href="Carousel#calculate_transition" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">calculate</span><span class="lowerident">_</span><span class="lowerident">transition</span><span class="kw"> :</span><span class="upperident"> Bool</span><span class="delimiter">,</span><span class="upperident"> U64</span><span class="kw"> -&gt;</span><span class="upperident"> Str</span></code></h3><p>Calculate the CSS transition. Exported for testing.</p>
+</section><section><h3 id="nav_button_class" class="entry-name" ><a href="Carousel#nav_button_class" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">nav</span><span class="lowerident">_</span><span class="lowerident">button</span><span class="lowerident">_</span><span class="lowerident">class</span><span class="kw"> :</span><span class="upperident"> Str</span><span class="delimiter">,</span><span class="upperident"> Bool</span><span class="kw"> -&gt;</span><span class="upperident"> Str</span></code></h3><p>Calculate navigation button CSS class. Exported for testing.</p>
+</section><section><h3 id="view" class="entry-name" ><a href="Carousel#view" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor"><!--!
+	Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License -
+	https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+	Copyright 2023 Fonticons, Inc. -->
+	<path
+		d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0L562.8 267.7zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5L200.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z" />
+</svg></a><code><span class="lowerident">view</span><span class="kw"> :</span><span class="upperident"> State</span><span class="delimiter">,</span><span class="upperident"> List</span><span class="delimiter"> (</span><span class="upperident">Html</span><span class="lowerident"> state</span><span class="delimiter">)</span><span class="kw"> -&gt;</span><span class="upperident"> Html</span><span class="lowerident"> state</span></code></h3><p>Render the carousel. The carousel ID is read from the state (set at <a href="/joy-carousel/0.2.0/Carousel#init" title="Docs for Carousel.init"><code>init</code></a>).</p>
+<pre><samp><span class="lowerident">slide</span><span class="lowerident">_</span><span class="lowerident">content</span><span class="kw"> =</span><span class="upperident"> List</span><span class="delimiter">.</span><span class="lowerident">map</span><span class="delimiter">(</span><span class="lowerident">slides</span><span class="delimiter">,</span><span class="delimiter"> |</span><span class="lowerident">s</span><span class="delimiter">|</span><span class="lowerident"> div</span><span class="delimiter">(</span><span class="delimiter">[</span><span class="delimiter">]</span><span class="delimiter">,</span><span class="delimiter"> [</span><span class="lowerident">text</span><span class="delimiter">(</span><span class="lowerident">s</span><span class="delimiter">)</span><span class="delimiter">]</span><span class="delimiter">)</span><span class="delimiter">)</span><span class="upperident">
+Carousel</span><span class="delimiter">.</span><span class="lowerident">view</span><span class="delimiter">(</span><span class="lowerident">model</span><span class="delimiter">.</span><span class="lowerident">carousel</span><span class="lowerident">_</span><span class="lowerident">state</span><span class="delimiter">,</span><span class="lowerident"> slide</span><span class="lowerident">_</span><span class="lowerident">content</span><span class="delimiter">)</span></samp></pre></code></pre>
+</section>
+        <footer>
+            <p>Made by people who like to make nice things.</p>
+        </footer>
+    </main>
+</body>
+
+</html>

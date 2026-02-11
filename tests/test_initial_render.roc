@@ -24,7 +24,7 @@ import spec.Server {
     sleep!: Sleep.millis!,
 }
 
-## Test: Initial render shows carousel with slide 0 active
+## Test: Initial render shows carousels with slide 0 active
 main! : List Arg.Arg => Result {} _
 main! = |_args|
     Server.with!(
@@ -35,20 +35,22 @@ main! = |_args|
             Playwright.navigate!(page, base_url)?
 
             # Verify page title/heading renders
-            Playwright.wait_for_selector!(page, "text=Carousel Test")?
+            Playwright.wait_for!(page, "text=Carousel Test", Visible)?
 
-            # Verify carousel container exists
-            Playwright.wait_for_selector!(page, ".carousel")?
-
-            # Verify first slide content is visible
-            Playwright.wait_for_selector!(page, "text=Slide 1")?
-
-            # Verify active slide indicator shows 0
-            Playwright.wait_for_selector!(page, "text=Active slide: 0")?
+            # Verify games carousel renders
+            Playwright.wait_for!(page, "#games", Visible)?
+            Playwright.wait_for!(page, "text=Diablo II", Visible)?
 
             # Verify navigation buttons exist (test app has navigation: Bool.true)
-            Playwright.wait_for_selector!(page, ".carousel-button-prev")?
-            Playwright.wait_for_selector!(page, ".carousel-button-next")?
+            Playwright.wait_for!(page, "#games .carousel-button-prev", Visible)?
+            Playwright.wait_for!(page, "#games .carousel-button-next", Visible)?
+
+            # Verify prev is disabled at first slide
+            Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
+
+            # Verify drinks carousel renders
+            Playwright.wait_for!(page, "#drinks", Visible)?
+            Playwright.wait_for!(page, "text=Whisky", Visible)?
 
             Playwright.close!(browser),
     )

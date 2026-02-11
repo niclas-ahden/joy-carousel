@@ -24,8 +24,8 @@ import spec.Server {
     sleep!: Sleep.millis!,
 }
 
-## Test: Cannot go past last slide - dragging left at slide 3 stays at 3
-## The test app has 4 slides (0, 1, 2, 3)
+## Test: Cannot go past last slide - dragging left at last slide stays there
+## The games carousel has 2 slides (0, 1)
 main! : List Arg.Arg => Result {} _
 main! = |_args|
     Server.with!(
@@ -36,33 +36,19 @@ main! = |_args|
             Playwright.navigate!(page, base_url)?
 
             # Start at slide 0
-            Playwright.wait_for_selector!(page, "text=Active slide: 0")?
+            Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
 
             # Get the carousel element's bounding box for dynamic positioning
-            box = Playwright.bounding_box!(page, ".carousel")?
+            box = Playwright.bounding_box!(page, "#games")?
             center_x = box.x + (box.width / 2.0)
             center_y = box.y + (box.height / 2.0)
 
-            # Advance to slide 1
+            # Advance to slide 1 (last slide)
             Playwright.mouse_move!(page, center_x, center_y)?
             Playwright.mouse_down!(page)?
             Playwright.mouse_move_with_steps!(page, center_x - 300.0, center_y, 10)?
             Playwright.mouse_up!(page)?
-            Playwright.wait_for_selector!(page, "text=Active slide: 1")?
-
-            # Advance to slide 2
-            Playwright.mouse_move!(page, center_x, center_y)?
-            Playwright.mouse_down!(page)?
-            Playwright.mouse_move_with_steps!(page, center_x - 300.0, center_y, 10)?
-            Playwright.mouse_up!(page)?
-            Playwright.wait_for_selector!(page, "text=Active slide: 2")?
-
-            # Advance to slide 3 (last slide)
-            Playwright.mouse_move!(page, center_x, center_y)?
-            Playwright.mouse_down!(page)?
-            Playwright.mouse_move_with_steps!(page, center_x - 300.0, center_y, 10)?
-            Playwright.mouse_up!(page)?
-            Playwright.wait_for_selector!(page, "text=Active slide: 3")?
+            Playwright.wait_for!(page, "#games .carousel-button-next.carousel-button-disabled", Visible)?
 
             # Try to go past the last slide
             Playwright.mouse_move!(page, center_x, center_y)?
@@ -73,8 +59,8 @@ main! = |_args|
             # Small delay to let any transition settle
             Sleep.millis!(500)
 
-            # Should still be on slide 3 - can't go past last slide
-            Playwright.wait_for_selector!(page, "text=Active slide: 3")?
+            # Should still be on last slide - can't go past it (next still disabled)
+            Playwright.wait_for!(page, "#games .carousel-button-next.carousel-button-disabled", Visible)?
 
             Playwright.close!(browser),
     )

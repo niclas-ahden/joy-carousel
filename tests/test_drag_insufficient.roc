@@ -34,11 +34,11 @@ main! = |_args|
 
             Playwright.navigate!(page, base_url)?
 
-            # Wait for initial render at slide 0
-            Playwright.wait_for_selector!(page, "text=Active slide: 0")?
+            # Wait for initial render at slide 0 (prev disabled)
+            Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
 
             # Get the carousel element's bounding box for dynamic positioning
-            box = Playwright.bounding_box!(page, ".carousel")?
+            box = Playwright.bounding_box!(page, "#games")?
             center_x = box.x + (box.width / 2.0)
             center_y = box.y + (box.height / 2.0)
 
@@ -51,8 +51,8 @@ main! = |_args|
             # Small delay to let any transition settle
             Sleep.millis!(500)
 
-            # Should still be on slide 0 since drag was insufficient
-            Playwright.wait_for_selector!(page, "text=Active slide: 0")?
+            # Should still be on slide 0 since drag was insufficient (prev still disabled)
+            Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
 
             Playwright.close!(browser),
     )

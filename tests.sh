@@ -3,6 +3,9 @@ set -eo pipefail
 
 cd "$(dirname "$0")"
 
+# Build test app (client WASM + server) before running tests
+./build-test-app.sh
+
 echo "Running tests..."
 
 # Use systemd scope when available (ensures all descendant processes are killed)

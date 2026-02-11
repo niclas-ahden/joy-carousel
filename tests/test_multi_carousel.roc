@@ -24,7 +24,7 @@ import spec.Server {
     sleep!: Sleep.millis!,
 }
 
-## Test: Dragging right (300px, exceeds 50px threshold) goes to previous slide
+## Test: Multiple carousels route events independently
 main! : List Arg.Arg => Result {} _
 main! = |_args|
     Server.with!(
@@ -34,33 +34,27 @@ main! = |_args|
 
             Playwright.navigate!(page, base_url)?
 
-            # Wait for initial render at slide 0 (prev disabled)
+            # Verify both carousels render at slide 0 (prev disabled on both)
             Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
+            Playwright.wait_for!(page, "#drinks .carousel-button-prev.carousel-button-disabled", Visible)?
 
-            # Get the carousel element's bounding box for dynamic positioning
-            box = Playwright.bounding_box!(page, "#games")?
-            center_x = box.x + (box.width / 2.0)
-            center_y = box.y + (box.height / 2.0)
+            # Click next on games → only games advances
+            Playwright.click!(page, "#games .carousel-button-next")?
+            Playwright.wait_for!(page, "#games .carousel-button-prev:not(.carousel-button-disabled)", Visible)?
+            # Drinks should still be at slide 0
+            Playwright.wait_for!(page, "#drinks .carousel-button-prev.carousel-button-disabled", Visible)?
 
-            # First, drag forward to get to slide 1
-            Playwright.mouse_move!(page, center_x, center_y)?
-            Playwright.mouse_down!(page)?
-            Playwright.mouse_move_with_steps!(page, center_x - 300.0, center_y, 10)?
-            Playwright.mouse_up!(page)?
-
+            # Click next on drinks → only drinks advances
+            Playwright.click!(page, "#drinks .carousel-button-next")?
+            Playwright.wait_for!(page, "#drinks .carousel-button-prev:not(.carousel-button-disabled)", Visible)?
+            # Games should still be at slide 1 (prev not disabled)
             Playwright.wait_for!(page, "#games .carousel-button-prev:not(.carousel-button-disabled)", Visible)?
 
-            # Allow transition animation to complete before next drag
-            Sleep.millis!(400)
-
-            # Now drag right (backward) to go back to slide 0
-            Playwright.mouse_move!(page, center_x, center_y)?
-            Playwright.mouse_down!(page)?
-            Playwright.mouse_move_with_steps!(page, center_x + 300.0, center_y, 10)?
-            Playwright.mouse_up!(page)?
-
-            # Back at first slide (prev disabled again)
+            # Click prev on games → only games goes back
+            Playwright.click!(page, "#games .carousel-button-prev")?
             Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
+            # Drinks should still be at slide 1
+            Playwright.wait_for!(page, "#drinks .carousel-button-prev:not(.carousel-button-disabled)", Visible)?
 
             Playwright.close!(browser),
     )

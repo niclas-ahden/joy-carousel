@@ -25,6 +25,7 @@ import spec.Server {
 }
 
 ## Test: Navigation buttons (next/prev) work correctly
+## The games carousel has 2 slides (0, 1)
 main! : List Arg.Arg => Result {} _
 main! = |_args|
     Server.with!(
@@ -34,33 +35,23 @@ main! = |_args|
 
             Playwright.navigate!(page, base_url)?
 
-            # Wait for initial render at slide 0
-            Playwright.wait_for_selector!(page, "text=Active slide: 0")?
+            # Verify prev button is disabled at first slide, next is enabled
+            Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
+            Playwright.wait_for!(page, "#games .carousel-button-next:not(.carousel-button-disabled)", Visible)?
 
-            # Verify prev button is disabled at first slide
-            Playwright.wait_for_selector!(page, ".carousel-button-prev.carousel-button-disabled")?
+            # Click next button to go to slide 1 (last)
+            Playwright.click!(page, "#games .carousel-button-next")?
 
-            # Click next button to go to slide 1
-            Playwright.click!(page, ".carousel-button-next")?
-            Playwright.wait_for_selector!(page, "text=Active slide: 1")?
+            # Prev should be enabled, next should be disabled (last slide)
+            Playwright.wait_for!(page, "#games .carousel-button-prev:not(.carousel-button-disabled)", Visible)?
+            Playwright.wait_for!(page, "#games .carousel-button-next.carousel-button-disabled", Visible)?
 
-            # Prev button should no longer be disabled
-            Playwright.wait_for_selector!(page, ".carousel-button-prev:not(.carousel-button-disabled)")?
+            # Click prev button to go back to slide 0
+            Playwright.click!(page, "#games .carousel-button-prev")?
 
-            # Click next button to go to slide 2
-            Playwright.click!(page, ".carousel-button-next")?
-            Playwright.wait_for_selector!(page, "text=Active slide: 2")?
-
-            # Click next button to go to slide 3 (last)
-            Playwright.click!(page, ".carousel-button-next")?
-            Playwright.wait_for_selector!(page, "text=Active slide: 3")?
-
-            # Verify next button is disabled at last slide
-            Playwright.wait_for_selector!(page, ".carousel-button-next.carousel-button-disabled")?
-
-            # Click prev button to go back to slide 2
-            Playwright.click!(page, ".carousel-button-prev")?
-            Playwright.wait_for_selector!(page, "text=Active slide: 2")?
+            # Prev disabled again (first slide), next enabled
+            Playwright.wait_for!(page, "#games .carousel-button-prev.carousel-button-disabled", Visible)?
+            Playwright.wait_for!(page, "#games .carousel-button-next:not(.carousel-button-disabled)", Visible)?
 
             Playwright.close!(browser),
     )

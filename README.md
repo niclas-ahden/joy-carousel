@@ -17,22 +17,23 @@ import carousel.Carousel
 
 Model : { carousel_state : Carousel.State }
 
-slides : List Str
-slides = ["Slide 1", "Slide 2", "Slide 3"]
+favorite_games : List Str
+favorite_games = ["Diablo", "Diablo II", "Diablo II: Lord of Destruction", "Diablo II: Resurrected"]
 
 init! : Str => Model
 init! = |_flags|
     config = { Carousel.default_config & navigation: Bool.true }
     carousel_state =
-        when Carousel.init(config, List.len(slides)) is
+        when Carousel.init({ id: "my-carousel", config, slide_count: List.len(favorite_games) }) is
             Ok(state) -> state
-            Err(_) -> crash "Invalid carousel configuration"
+            Err(_) -> crash "Invalid carousel configuration" # You may handle this gracefully
     { carousel_state }
 
 update! : Model, Str, List U8 => Action Model
 update! = |model, event_name, payload|
     when Carousel.decode_event(event_name, payload) is
-        Ok(event) ->
+        # We match `id: _` because we only have a single carousel on the page (see tests/app/client/main.roc for multiple carousels)
+        Ok({ id: _, event }) ->
             new_state = Carousel.update(model.carousel_state, event)
             Action.update({ model & carousel_state: new_state })
         Err(_) ->
@@ -40,8 +41,8 @@ update! = |model, event_name, payload|
 
 render : Model -> Html Model
 render = |model|
-    slide_content = List.map(slides, |s| div([], [text(s)]))
-    Carousel.view({ state: model.carousel_state, id: "my-carousel", slides: slide_content })
+    slides = List.map(favorite_games, |s| div([], [text(s)]))
+    Carousel.view(model.carousel_state, slides)
 ```
 
 ## Styles
