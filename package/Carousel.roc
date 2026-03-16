@@ -341,7 +341,7 @@ view = |state, slides|
             id(carousel_id),
             class("carousel"),
             HtmlEvent.on_touchstart(format_event(carousel_id, TouchStart)),
-            HtmlEvent.on_touchmove_prevent_default(format_event(carousel_id, TouchMove), Bool.true),
+            HtmlEvent.on_touchmove(format_event(carousel_id, TouchMove)),
             HtmlEvent.on_touchend(format_event(carousel_id, TouchEnd)),
             HtmlEvent.on_mousedown(format_event(carousel_id, MouseDown)),
             HtmlEvent.on_mousemove(format_event(carousel_id, MouseMove)),
