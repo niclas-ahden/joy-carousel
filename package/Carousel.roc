@@ -5,15 +5,11 @@ module [
     InitError,
     default_config,
     init,
+    set_slide_count,
     view,
     encode_event,
     decode_event,
     update,
-    # View helper functions (exported for testing)
-    calculate_slide_width,
-    calculate_transform,
-    calculate_transition,
-    nav_button_class,
 ]
 
 import html.Html exposing [Html, div, button]
@@ -71,7 +67,7 @@ InitError : [
 ]
 
 ## Create carousel state for the given number of slides.
-## The `id` is validated to not contain `|` and is stored in the state
+## The `id` must be non-empty and must not contain `|`. It is stored in the state
 ## for use by [view] and [encode_event].
 ##
 ## ```
@@ -82,7 +78,9 @@ InitError : [
 ## ```
 init : { id : Str, config : Config, slide_count : U64 } -> Result State InitError
 init = |{ id: carousel_id, config, slide_count }|
-    when Str.split_first(carousel_id, "|") is
+    if Str.is_empty(carousel_id) then
+        Err(InvalidCarouselId(carousel_id))
+    else when Str.split_first(carousel_id, "|") is
         Ok(_) -> Err(InvalidCarouselId(carousel_id))
         Err(_) ->
             if slide_count == 0 then
@@ -101,6 +99,21 @@ init = |{ id: carousel_id, config, slide_count }|
                     drag_offset_px: 0.0,
                     config,
                 })
+
+## Update the slide count after initialization.
+## Returns `Err(NoSlides)` if `new_count` is 0 (same as [init]).
+## Clamps the active index if it would be out of bounds for the new count.
+set_slide_count : State, U64 -> Result State [NoSlides]
+set_slide_count = |state, new_count|
+    if new_count == 0 then
+        Err(NoSlides)
+    else
+        clamped_index =
+            if state.active_index >= new_count then
+                new_count - 1
+            else
+                state.active_index
+        Ok({ state & slide_count: new_count, active_index: clamped_index })
 
 ## Carousel events. Decoded from DOM events via [decode_event].
 Event : [
@@ -253,12 +266,10 @@ update = |state, event|
             else
                 state
 
-## Calculate slide width as a percentage. Exported for testing.
 calculate_slide_width : F64 -> F64
 calculate_slide_width = |slides_per_view|
     100.0 / slides_per_view
 
-## Calculate the CSS transform for the carousel wrapper. Exported for testing.
 calculate_transform : { active_index : U64, slides_per_view : F64, is_dragging : Bool, drag_offset_px : F64 } -> Str
 calculate_transform = |{ active_index, slides_per_view, is_dragging, drag_offset_px }|
     slide_width = calculate_slide_width(slides_per_view)
@@ -269,7 +280,6 @@ calculate_transform = |{ active_index, slides_per_view, is_dragging, drag_offset
     else
         "translate3d(${Num.to_str(base_translate_percent)}%, 0, 0)"
 
-## Calculate the CSS transition. Exported for testing.
 calculate_transition : Bool, U64 -> Str
 calculate_transition = |is_dragging, animation_duration_ms|
     if is_dragging then
@@ -277,7 +287,6 @@ calculate_transition = |is_dragging, animation_duration_ms|
     else
         "transform ${Num.to_str(animation_duration_ms)}ms ease-out"
 
-## Calculate navigation button CSS class. Exported for testing.
 nav_button_class : Str, Bool -> Str
 nav_button_class = |base_class, is_disabled|
     if is_disabled then
@@ -919,7 +928,54 @@ expect
         _ -> Bool.false
 
 expect
+    # init rejects empty id
+    when init({ id: "", config: default_config, slide_count: 3 }) is
+        Err(InvalidCarouselId("")) -> Bool.true
+        _ -> Bool.false
+
+expect
     # init accepts valid id without pipe
     when init({ id: "my-carousel", config: default_config, slide_count: 3 }) is
         Ok(state) -> state.id == "my-carousel"
+        Err(_) -> Bool.false
+
+# --- set_slide_count tests ---
+
+expect
+    # set_slide_count rejects new_count == 0
+    when init({ id: "test", config: default_config, slide_count: 3 }) is
+        Ok(state) ->
+            when set_slide_count(state, 0) is
+                Err(NoSlides) -> Bool.true
+                Ok(_) -> Bool.false
+        Err(_) -> Bool.false
+
+expect
+    # set_slide_count updates slide_count for a valid new_count
+    when init({ id: "test", config: default_config, slide_count: 3 }) is
+        Ok(state) ->
+            when set_slide_count(state, 5) is
+                Ok(new_state) -> new_state.slide_count == 5 && new_state.active_index == 0
+                Err(_) -> Bool.false
+        Err(_) -> Bool.false
+
+expect
+    # set_slide_count clamps active_index when it would be out of bounds
+    config = { default_config & initial_slide: 4 }
+    when init({ id: "test", config, slide_count: 5 }) is
+        Ok(state) ->
+            # active_index is 4; shrink to 3 slides -> clamp to 2
+            when set_slide_count(state, 3) is
+                Ok(new_state) -> new_state.active_index == 2 && new_state.slide_count == 3
+                Err(_) -> Bool.false
+        Err(_) -> Bool.false
+
+expect
+    # set_slide_count keeps active_index when still in bounds
+    config = { default_config & initial_slide: 1 }
+    when init({ id: "test", config, slide_count: 5 }) is
+        Ok(state) ->
+            when set_slide_count(state, 10) is
+                Ok(new_state) -> new_state.active_index == 1 && new_state.slide_count == 10
+                Err(_) -> Bool.false
         Err(_) -> Bool.false

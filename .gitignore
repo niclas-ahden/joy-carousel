@@ -8,7 +8,13 @@
 
 .direnv/
 .envrc
+
+# Generated docs. The versioned docs site is assembled in CI from release
+# assets (see .github/workflows/deploy-docs.yml) -- never committed.
 generated-docs/
+release_docs/
+temp_docs/
+www/
 
 # Build artifacts
 app.o

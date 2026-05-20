@@ -58,8 +58,6 @@ Customize with CSS variables:
 ```css
 :root {
     --carousel-navigation-color: #007aff;
-    --carousel-pagination-color: #000;
-    --carousel-pagination-bullet-active-color: #007aff;
 }
 ```
 
