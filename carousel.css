@@ -20,6 +20,36 @@
     position: relative;
 }
 
+/* Fade mode (config.is_fade): every slide shares one grid cell and is offset
+   side by side with translateX (set inline per slide), so a window of
+   slides_per_view slides can be visible at once. The active window fades in on
+   top; the rest are transparent and clipped by .carousel's overflow: hidden.
+   The container sizes itself to the largest slide. */
+.carousel-wrapper--fade {
+    display: grid;
+    width: 100%;
+}
+
+/* width and transform are set inline per slide (sized to slides_per_view and
+   positioned by index). Only opacity transitions here, so repositioning is
+   instant while slides cross-fade.
+   No will-change: opacity transitions are already composited, and the hint
+   would promote every slide to a permanent layer. --carousel-fade-duration is
+   set on .carousel-wrapper--fade and cascades down. */
+.carousel-slide--fade {
+    grid-area: 1 / 1;
+    opacity: 0;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity var(--carousel-fade-duration, 300ms) ease-out;
+}
+
+.carousel-slide--fade.carousel-slide--active {
+    opacity: 1;
+    z-index: 1;
+    pointer-events: auto;
+}
+
 /* Navigation buttons */
 .carousel-button-prev,
 .carousel-button-next {

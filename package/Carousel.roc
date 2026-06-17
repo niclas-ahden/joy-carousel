@@ -22,14 +22,21 @@ import html.Event as HtmlEvent
 ## config = { Carousel.default_config & navigation: Bool.true, drag_threshold_px: 100 }
 ## ```
 ##
-## - `slides_per_view`: Number of slides visible at once. Use `1.0` for full-width slides,
-##   `2.0` for half-width, or `1.5` to show a partial next slide as a preview.
+## - `is_fade`: How the carousel moves between slides. `Bool.false` (the default)
+##   slides a horizontal track, `Bool.true` cross-fades, stacking the slides and
+##   fading the active window in on top. Both honour `slides_per_view`.
+## - `slides_per_view`: Number of slides visible at once — `1.0` for full-width
+##   slides, `2.0` for half-width, or `1.5` to show a partial next slide as a
+##   preview. Must be greater than 0 (validated at [init]).
 ## - `initial_slide`: Zero-indexed starting slide.
 ## - `navigation`: Show prev/next buttons.
 ## - `drag_threshold_px`: Minimum drag distance in pixels before a swipe registers.
-## - `animation_duration_ms`: Slide transition duration in milliseconds.
+## - `animation_duration_ms`: Transition duration in milliseconds (slide movement or fade).
 ##
+## These fields are deliberately flat scalars (no tag unions) so that `Config`
+## can be JSON-encoded/decoded (Roc cannot do that for tag unions at this time).
 Config : {
+    is_fade : Bool,
     slides_per_view : F64,
     initial_slide : U64,
     navigation : Bool,
@@ -37,9 +44,11 @@ Config : {
     animation_duration_ms : U64,
 }
 
-## Default configuration: 1 slide per view, no navigation buttons, 50px drag threshold, 300ms animation.
+## Default configuration: horizontal slide transition with 1 slide per view, no navigation
+## buttons, 50px drag threshold, 300ms animation.
 default_config : Config
 default_config = {
+    is_fade: Bool.false,
     slides_per_view: 1.0,
     initial_slide: 0,
     navigation: Bool.false,
@@ -80,25 +89,28 @@ init : { id : Str, config : Config, slide_count : U64 } -> Result State InitErro
 init = |{ id: carousel_id, config, slide_count }|
     if Str.is_empty(carousel_id) then
         Err(InvalidCarouselId(carousel_id))
-    else when Str.split_first(carousel_id, "|") is
-        Ok(_) -> Err(InvalidCarouselId(carousel_id))
-        Err(_) ->
-            if slide_count == 0 then
-                Err(NoSlides)
-            else if config.slides_per_view <= 0.0 then
-                Err(InvalidSlidesPerView)
-            else if config.initial_slide >= slide_count then
-                Err(InitialSlideOutOfBounds({ initial_slide: config.initial_slide, slide_count }))
-            else
-                Ok({
-                    id: carousel_id,
-                    active_index: config.initial_slide,
-                    slide_count,
-                    is_dragging: Bool.false,
-                    start_x: 0.0,
-                    drag_offset_px: 0.0,
-                    config,
-                })
+    else
+        when Str.split_first(carousel_id, "|") is
+            Ok(_) -> Err(InvalidCarouselId(carousel_id))
+            Err(_) ->
+                if slide_count == 0 then
+                    Err(NoSlides)
+                else if config.slides_per_view <= 0.0 then
+                    Err(InvalidSlidesPerView)
+                else if config.initial_slide >= slide_count then
+                    Err(InitialSlideOutOfBounds({ initial_slide: config.initial_slide, slide_count }))
+                else
+                    Ok(
+                        {
+                            id: carousel_id,
+                            active_index: config.initial_slide,
+                            slide_count,
+                            is_dragging: Bool.false,
+                            start_x: 0.0,
+                            drag_offset_px: 0.0,
+                            config,
+                        },
+                    )
 
 ## Update the slide count after initialization.
 ## Returns `Err(NoSlides)` if `new_count` is 0 (same as [init]).
@@ -237,9 +249,9 @@ update = |state, event|
                 threshold = Num.to_f64(state.config.drag_threshold_px)
 
                 new_index =
-                    if state.drag_offset_px < -threshold && state.active_index < state.slide_count - 1 then
+                    if state.drag_offset_px < (-threshold) and state.active_index < state.slide_count - 1 then
                         state.active_index + 1
-                    else if state.drag_offset_px > threshold && state.active_index > 0 then
+                    else if state.drag_offset_px > threshold and state.active_index > 0 then
                         state.active_index - 1
                     else
                         state.active_index
@@ -294,6 +306,33 @@ nav_button_class = |base_class, is_disabled|
     else
         base_class
 
+# A fade slide is in the visible window when it sits at or after the active
+# slide and within `slides_per_view` of it. For the default `1.0` this is just
+# the active slide, `2.0` shows the active slide plus the next one, `1.5`
+# shows the active slide plus a partial preview of the next. Slides outside
+# the window stay transparent and are clipped by the carousel's `overflow:
+# hidden`. Mirrors the visible range of slide mode.
+fade_slide_in_window : U64, U64, F64 -> Bool
+fade_slide_in_window = |index, active_index, slides_per_view|
+    index >= active_index and (Num.to_f64(index) - Num.to_f64(active_index)) < slides_per_view
+
+fade_slide_class : U64, U64, F64 -> Str
+fade_slide_class = |index, active_index, slides_per_view|
+    if fade_slide_in_window(index, active_index, slides_per_view) then
+        "carousel-slide carousel-slide--fade carousel-slide--active"
+    else
+        "carousel-slide carousel-slide--fade"
+
+# Horizontal position of a fade slide as a percentage of its own width, so each
+# slide steps one slot to the right of the active one regardless of
+# `slides_per_view`. The active slide sits at 0%, the next at 100% (flush to its
+# right), earlier slides at negative offsets (off-screen left). Applied as an
+# un-transitioned `translateX`, so only opacity animates. The window snaps into
+# place while the slides cross-fade.
+fade_slide_offset_percent : U64, U64 -> F64
+fade_slide_offset_percent = |index, active_index|
+    (Num.to_f64(index) - Num.to_f64(active_index)) * 100.0
+
 ## Render the carousel. The carousel ID is read from the state (set at [init]).
 ##
 ## ```
@@ -303,32 +342,12 @@ nav_button_class = |base_class, is_disabled|
 view : State, List (Html state) -> Html state
 view = |state, slides|
     carousel_id = state.id
-    slide_width = calculate_slide_width(state.config.slides_per_view)
-
-    transform = calculate_transform({
-        active_index: state.active_index,
-        slides_per_view: state.config.slides_per_view,
-        is_dragging: state.is_dragging,
-        drag_offset_px: state.drag_offset_px,
-    })
-
-    transition = calculate_transition(state.is_dragging, state.config.animation_duration_ms)
-
-    wrapped_slides =
-        List.map_with_index(
-            slides,
-            |slide, _idx|
-                div([class("carousel-slide"), style([("width", "${Num.to_str(slide_width)}%")])], [slide]),
-        )
 
     wrapper =
-        div(
-            [
-                class("carousel-wrapper"),
-                style([("transform", transform), ("transition", transition)]),
-            ],
-            wrapped_slides,
-        )
+        if state.config.is_fade then
+            fade_wrapper(state, slides, state.config.slides_per_view)
+        else
+            sliding_wrapper(state, slides, state.config.slides_per_view)
 
     nav_buttons =
         if state.config.navigation then
@@ -360,9 +379,87 @@ view = |state, slides|
         List.concat([wrapper], nav_buttons),
     )
 
+sliding_wrapper : State, List (Html state), F64 -> Html state
+sliding_wrapper = |state, slides, slides_per_view|
+    slide_width = calculate_slide_width(slides_per_view)
+
+    transform = calculate_transform(
+        {
+            active_index: state.active_index,
+            slides_per_view,
+            is_dragging: state.is_dragging,
+            drag_offset_px: state.drag_offset_px,
+        },
+    )
+
+    transition = calculate_transition(state.is_dragging, state.config.animation_duration_ms)
+
+    wrapped_slides =
+        List.map_with_index(
+            slides,
+            |slide, _idx|
+                div([class("carousel-slide"), style([("width", "${Num.to_str(slide_width)}%")])], [slide]),
+        )
+
+    div(
+        [
+            class("carousel-wrapper"),
+            style([("transform", transform), ("transition", transition)]),
+        ],
+        wrapped_slides,
+    )
+
+## All slides share one grid cell and are positioned side by side with an
+## un-transitioned `translateX`. The slides in the active window (see
+## [fade_slide_in_window]) fade in on top while the rest stay transparent and
+## are clipped by the carousel's `overflow: hidden`. Each slide is sized to
+## `slides_per_view` (100% for the default `1.0`), matching slide mode, so the
+## window honours `slides_per_view` — `2.0` cross-fades two slides at a time,
+## `1.5` shows a partial preview. Because only opacity transitions, slides that
+## remain visible across a step snap to their new slot rather than sliding.
+## The container sizes itself to the largest slide, so no height management is
+## needed. Dragging changes slides on release (threshold-based) but has no
+## visual effect mid-drag.
+fade_wrapper : State, List (Html state), F64 -> Html state
+fade_wrapper = |state, slides, slides_per_view|
+    slide_width = calculate_slide_width(slides_per_view)
+
+    wrapped_slides =
+        List.map_with_index(
+            slides,
+            |slide, idx|
+                offset = fade_slide_offset_percent(idx, state.active_index)
+                div(
+                    [
+                        class(fade_slide_class(idx, state.active_index, slides_per_view)),
+                        style(
+                            [
+                                ("width", "${Num.to_str(slide_width)}%"),
+                                ("transform", "translateX(${Num.to_str(offset)}%)"),
+                            ],
+                        ),
+                    ],
+                    [slide],
+                ),
+        )
+
+    div(
+        [
+            class("carousel-wrapper carousel-wrapper--fade"),
+            # carousel.css reads this in each slide's opacity transition, set once here
+            # so it cascades to every slide.
+            style([("--carousel-fade-duration", "${Num.to_str(state.config.animation_duration_ms)}ms")]),
+        ],
+        wrapped_slides,
+    )
+
 # ============================================================================
 # Unit Tests
 # ============================================================================
+
+# Note: the JSON-serialization regression guard for State/Config lives in
+# `test_serialization.roc` (a standalone test app), so the package itself does
+# not depend on roc-json. See that file for why State/Config must stay flat.
 
 # --- init tests ---
 
@@ -370,7 +467,7 @@ expect
     # init creates state with correct initial values
     config = { default_config & initial_slide: 2 }
     when init({ id: "test", config, slide_count: 5 }) is
-        Ok(state) -> state.active_index == 2 && state.slide_count == 5 && state.is_dragging == Bool.false && state.id == "test"
+        Ok(state) -> state.active_index == 2 and state.slide_count == 5 and state.is_dragging == Bool.false and state.id == "test"
         Err(_) -> Bool.false
 
 expect
@@ -442,6 +539,7 @@ expect
         Ok(state) ->
             new_state = update(state, MouseDown(100.0, 50.0))
             new_state.is_dragging == Bool.true
+
         Err(_) -> Bool.false
 
 expect
@@ -451,6 +549,7 @@ expect
             state_dragging = update(state, MouseDown(100.0, 50.0))
             state_moved = update(state_dragging, MouseMove(50.0, 50.0))
             state_moved.drag_offset_px < 0.0 # moved left, so offset is negative
+
         Err(_) -> Bool.false
 
 expect
@@ -459,6 +558,7 @@ expect
         Ok(state) ->
             new_state = update(state, MouseMove(50.0, 50.0))
             new_state.is_dragging == Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -468,7 +568,8 @@ expect
             state1 = update(state, MouseDown(200.0, 50.0))
             state2 = update(state1, MouseMove(100.0, 50.0)) # -100px offset, exceeds -50 threshold
             state3 = update(state2, MouseUp(100.0, 50.0))
-            state3.active_index == 1 && state3.is_dragging == Bool.false
+            state3.active_index == 1 and state3.is_dragging == Bool.false
+
         Err(_) -> Bool.false
 
 # --- update: drag backward tests ---
@@ -482,6 +583,7 @@ expect
             state2 = update(state1, MouseMove(200.0, 50.0)) # +100px offset, exceeds +50 threshold
             state3 = update(state2, MouseUp(200.0, 50.0))
             state3.active_index == 0
+
         Err(_) -> Bool.false
 
 # --- update: insufficient drag tests ---
@@ -494,6 +596,7 @@ expect
             state2 = update(state1, MouseMove(70.0, 50.0)) # -30px offset, below 50px threshold
             state3 = update(state2, MouseUp(70.0, 50.0))
             state3.active_index == 0
+
         Err(_) -> Bool.false
 
 expect
@@ -504,6 +607,7 @@ expect
             state2 = update(state1, MouseMove(51.0, 50.0)) # -49px offset
             state3 = update(state2, MouseUp(51.0, 50.0))
             state3.active_index == 0
+
         Err(_) -> Bool.false
 
 expect
@@ -514,6 +618,7 @@ expect
             state2 = update(state1, MouseMove(49.0, 50.0)) # -51px offset
             state3 = update(state2, MouseUp(49.0, 50.0))
             state3.active_index == 1
+
         Err(_) -> Bool.false
 
 # --- update: boundary tests ---
@@ -526,6 +631,7 @@ expect
             state2 = update(state1, MouseMove(200.0, 50.0)) # +100px, would go to -1
             state3 = update(state2, MouseUp(200.0, 50.0))
             state3.active_index == 0
+
         Err(_) -> Bool.false
 
 expect
@@ -537,6 +643,7 @@ expect
             state2 = update(state1, MouseMove(100.0, 50.0)) # -100px, would go to 3
             state3 = update(state2, MouseUp(100.0, 50.0))
             state3.active_index == 2
+
         Err(_) -> Bool.false
 
 # --- update: PrevSlide/NextSlide tests ---
@@ -547,6 +654,7 @@ expect
         Ok(state) ->
             new_state = update(state, NextSlide)
             new_state.active_index == 1
+
         Err(_) -> Bool.false
 
 expect
@@ -556,6 +664,7 @@ expect
             state = { initial & active_index: 2 }
             new_state = update(state, PrevSlide)
             new_state.active_index == 1
+
         Err(_) -> Bool.false
 
 expect
@@ -565,6 +674,7 @@ expect
             state = { initial & active_index: 2 }
             new_state = update(state, NextSlide)
             new_state.active_index == 2
+
         Err(_) -> Bool.false
 
 expect
@@ -573,6 +683,7 @@ expect
         Ok(state) ->
             new_state = update(state, PrevSlide)
             new_state.active_index == 0
+
         Err(_) -> Bool.false
 
 # --- update: GoToSlide tests ---
@@ -583,6 +694,7 @@ expect
         Ok(state) ->
             new_state = update(state, GoToSlide(3))
             new_state.active_index == 3
+
         Err(_) -> Bool.false
 
 expect
@@ -591,6 +703,7 @@ expect
         Ok(state) ->
             new_state = update(state, GoToSlide(10))
             new_state.active_index == 0
+
         Err(_) -> Bool.false
 
 # --- update: MouseLeave during drag tests ---
@@ -602,7 +715,8 @@ expect
             state1 = update(state, MouseDown(200.0, 50.0))
             state2 = update(state1, MouseMove(100.0, 50.0)) # -100px
             state3 = update(state2, MouseLeave)
-            state3.active_index == 1 && state3.is_dragging == Bool.false
+            state3.active_index == 1 and state3.is_dragging == Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -612,7 +726,8 @@ expect
             state1 = update(state, MouseDown(100.0, 50.0))
             state2 = update(state1, MouseMove(70.0, 50.0)) # -30px
             state3 = update(state2, MouseLeave)
-            state3.active_index == 0 && state3.is_dragging == Bool.false
+            state3.active_index == 0 and state3.is_dragging == Bool.false
+
         Err(_) -> Bool.false
 
 # --- update: TouchStart/TouchMove/TouchEnd tests ---
@@ -623,6 +738,7 @@ expect
         Ok(state) ->
             new_state = update(state, TouchStart(100.0, 50.0))
             new_state.is_dragging == Bool.true
+
         Err(_) -> Bool.false
 
 expect
@@ -633,6 +749,7 @@ expect
             state2 = update(state1, TouchMove(100.0, 50.0))
             state3 = update(state2, TouchEnd(100.0, 50.0))
             state3.active_index == 1
+
         Err(_) -> Bool.false
 
 # --- encode_event/decode_event roundtrip tests ---
@@ -645,6 +762,7 @@ expect
             when decode_event(encoded, []) is
                 Ok({ id: carousel_id, event: PrevSlide }) -> carousel_id == "test-carousel"
                 _ -> Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -655,6 +773,7 @@ expect
             when decode_event(encoded, []) is
                 Ok({ id: carousel_id, event: NextSlide }) -> carousel_id == "test-carousel"
                 _ -> Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -663,8 +782,9 @@ expect
         Ok(state) ->
             encoded = encode_event(state, GoToSlide(2))
             when decode_event(encoded, []) is
-                Ok({ id: carousel_id, event: GoToSlide(slide_idx) }) -> carousel_id == "test-carousel" && slide_idx == 2
+                Ok({ id: carousel_id, event: GoToSlide(slide_idx) }) -> carousel_id == "test-carousel" and slide_idx == 2
                 _ -> Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -783,84 +903,96 @@ expect
 expect
     # 1 slide per view = 100% width
     width = calculate_slide_width(1.0)
-    width > 99.9 && width < 100.1
+    width > 99.9 and width < 100.1
 
 expect
     # 2 slides per view = 50% width
     width = calculate_slide_width(2.0)
-    width > 49.9 && width < 50.1
+    width > 49.9 and width < 50.1
 
 expect
     # 3 slides per view = ~33.33% width
     width = calculate_slide_width(3.0)
-    width > 33.0 && width < 34.0
+    width > 33.0 and width < 34.0
 
 expect
     # fractional slides per view (1.5) = ~66.67% width
     width = calculate_slide_width(1.5)
-    width > 66.0 && width < 67.0
+    width > 66.0 and width < 67.0
 
 # calculate_transform tests
 
 expect
     # at slide 0, not dragging = translate3d(-0%, 0, 0)
     # Note: -0 is produced by negating 0.0 in Roc
-    transform = calculate_transform({
-        active_index: 0,
-        slides_per_view: 1.0,
-        is_dragging: Bool.false,
-        drag_offset_px: 0.0,
-    })
+    transform = calculate_transform(
+        {
+            active_index: 0,
+            slides_per_view: 1.0,
+            is_dragging: Bool.false,
+            drag_offset_px: 0.0,
+        },
+    )
     transform == "translate3d(-0%, 0, 0)"
 
 expect
     # at slide 1 with 1 slide per view = translate3d(-100%, 0, 0)
-    transform = calculate_transform({
-        active_index: 1,
-        slides_per_view: 1.0,
-        is_dragging: Bool.false,
-        drag_offset_px: 0.0,
-    })
+    transform = calculate_transform(
+        {
+            active_index: 1,
+            slides_per_view: 1.0,
+            is_dragging: Bool.false,
+            drag_offset_px: 0.0,
+        },
+    )
     transform == "translate3d(-100%, 0, 0)"
 
 expect
     # at slide 2 with 1 slide per view = translate3d(-200%, 0, 0)
-    transform = calculate_transform({
-        active_index: 2,
-        slides_per_view: 1.0,
-        is_dragging: Bool.false,
-        drag_offset_px: 0.0,
-    })
+    transform = calculate_transform(
+        {
+            active_index: 2,
+            slides_per_view: 1.0,
+            is_dragging: Bool.false,
+            drag_offset_px: 0.0,
+        },
+    )
     transform == "translate3d(-200%, 0, 0)"
 
 expect
     # at slide 1 with 2 slides per view = translate3d(-50%, 0, 0)
-    transform = calculate_transform({
-        active_index: 1,
-        slides_per_view: 2.0,
-        is_dragging: Bool.false,
-        drag_offset_px: 0.0,
-    })
+    transform = calculate_transform(
+        {
+            active_index: 1,
+            slides_per_view: 2.0,
+            is_dragging: Bool.false,
+            drag_offset_px: 0.0,
+        },
+    )
     transform == "translate3d(-50%, 0, 0)"
 
 expect
     # while dragging, uses calc() with pixel offset
-    transform = calculate_transform({
-        active_index: 0,
-        slides_per_view: 1.0,
-        is_dragging: Bool.true,
-        drag_offset_px: -50.0,
-    })
+    transform = calculate_transform(
+        {
+            active_index: 0,
+            slides_per_view: 1.0,
+            is_dragging: Bool.true,
+            drag_offset_px: -50.0,
+        },
+    )
     transform == "translate3d(calc(-0% + -50px), 0, 0)"
 
 expect
     # dragging with positive offset
-    transform = calculate_transform({
-        active_index: 1,
-        slides_per_view: 1.0,
-        is_dragging: Bool.true,
-        drag_offset_px: 75.0,
-    })
+    transform = calculate_transform(
+        {
+            active_index: 1,
+            slides_per_view: 1.0,
+            is_dragging: Bool.true,
+            drag_offset_px: 75.0,
+        },
+    )
     transform == "translate3d(calc(-100% + 75px), 0, 0)"
 
 # calculate_transition tests
@@ -907,6 +1039,73 @@ expect
     cls = nav_button_class("custom-class", Bool.true)
     cls == "custom-class carousel-button-disabled"
 
+# fade_slide_in_window tests
+
+expect
+    # the active slide is always in the window
+    fade_slide_in_window(2, 2, 1.0) == Bool.true
+
+expect
+    # slides before the active one are never in the window
+    fade_slide_in_window(1, 2, 1.0) == Bool.false
+
+expect
+    # with slides_per_view 1.0 the next slide is out of the window
+    fade_slide_in_window(3, 2, 1.0) == Bool.false
+
+expect
+    # slides_per_view 2.0 widens the window to the active slide plus the next
+    fade_slide_in_window(3, 2, 2.0) == Bool.true and fade_slide_in_window(4, 2, 2.0) == Bool.false
+
+expect
+    # a fractional slides_per_view still includes the partial preview slide
+    fade_slide_in_window(3, 2, 1.5) == Bool.true and fade_slide_in_window(4, 2, 1.5) == Bool.false
+
+# fade_slide_offset_percent tests
+
+expect
+    # the active slide sits at the origin
+    offset = fade_slide_offset_percent(2, 2)
+    offset > -0.1 and offset < 0.1
+
+expect
+    # each later slide steps one full slot to the right
+    offset = fade_slide_offset_percent(3, 2)
+    offset > 99.9 and offset < 100.1
+
+expect
+    # earlier slides sit off-screen to the left
+    offset = fade_slide_offset_percent(1, 2)
+    offset > -100.1 and offset < -99.9
+
+# fade_slide_class tests
+
+expect
+    # active slide gets the active class
+    cls = fade_slide_class(2, 2, 1.0)
+    cls == "carousel-slide carousel-slide--fade carousel-slide--active"
+
+expect
+    # inactive slide does not get the active class
+    cls = fade_slide_class(1, 2, 1.0)
+    cls == "carousel-slide carousel-slide--fade"
+
+expect
+    # a slide inside a widened window gets the active class
+    cls = fade_slide_class(3, 2, 2.0)
+    cls == "carousel-slide carousel-slide--fade carousel-slide--active"
+
+expect
+    # default config uses slide mode, not fade
+    default_config.is_fade == Bool.false
+
+expect
+    # a fade-mode carousel initializes like any other (slides_per_view still applies)
+    config = { default_config & is_fade: Bool.true }
+    when init({ id: "test", config, slide_count: 3 }) is
+        Ok(state) -> state.active_index == 0 and state.config.is_fade == Bool.true
+        Err(_) -> Bool.false
+
 # --- InvalidCarouselId validation tests (validated at init) ---
 
 expect
@@ -948,6 +1147,7 @@ expect
             when set_slide_count(state, 0) is
                 Err(NoSlides) -> Bool.true
                 Ok(_) -> Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -955,8 +1155,9 @@ expect
     when init({ id: "test", config: default_config, slide_count: 3 }) is
         Ok(state) ->
             when set_slide_count(state, 5) is
-                Ok(new_state) -> new_state.slide_count == 5 && new_state.active_index == 0
+                Ok(new_state) -> new_state.slide_count == 5 and new_state.active_index == 0
                 Err(_) -> Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -964,10 +1165,11 @@ expect
     config = { default_config & initial_slide: 4 }
     when init({ id: "test", config, slide_count: 5 }) is
         Ok(state) ->
-            # active_index is 4; shrink to 3 slides -> clamp to 2
+            # active_index is 4, shrink to 3 slides -> clamp to 2
             when set_slide_count(state, 3) is
-                Ok(new_state) -> new_state.active_index == 2 && new_state.slide_count == 3
+                Ok(new_state) -> new_state.active_index == 2 and new_state.slide_count == 3
                 Err(_) -> Bool.false
+
         Err(_) -> Bool.false
 
 expect
@@ -976,6 +1178,7 @@ expect
     when init({ id: "test", config, slide_count: 5 }) is
         Ok(state) ->
             when set_slide_count(state, 10) is
-                Ok(new_state) -> new_state.active_index == 1 && new_state.slide_count == 10
+                Ok(new_state) -> new_state.active_index == 1 and new_state.slide_count == 10
                 Err(_) -> Bool.false
+
         Err(_) -> Bool.false

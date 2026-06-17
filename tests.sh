@@ -3,6 +3,12 @@ set -eo pipefail
 
 cd "$(dirname "$0")"
 
+# Unit/serialization regression guard (no browser needed): asserts the public
+# State/Config types stay JSON-encodable/decodable. A tag union in them makes
+# Decoding underivable and blows up consumers' WASM builds — see the file.
+echo "Running serialization regression test..."
+roc test --linker=legacy test_serialization.roc
+
 # Build test app (client WASM + server) before running tests
 ./build-test-app.sh
 
