@@ -1,6 +1,6 @@
 app [Model, init!, respond!] {
     pf: platform "https://github.com/growthagent/basic-webserver/releases/download/0.15.0/HUvmkDBBkVzixg3f4HuJvb4KfEOpRlY4MS_JRbhbna8.tar.br",
-    html: "https://github.com/niclas-ahden/joy-html/releases/download/0.12.0/YuDkYcO06nJ7XHn3vR0vGETvUp1PGiE8LDJVJV15yZo.tar.br",
+    html: "https://github.com/niclas-ahden/joy-html/releases/download/0.13.0/D8dlKh8s_ZJeGZt5U_aeAx9b3KOBSady2jIGX_9of2Q.tar.br",
     shared: "../shared/main.roc",
 }
 
@@ -17,12 +17,24 @@ init! = |{}| Ok({})
 
 respond! : Request, Model => Result Response [ServerErr Str]_
 respond! = |request, _model|
-    when request.uri is
-        "/" -> serve_app!({})
-        "/pkg/web.js" -> serve_file!("tests/app/www/pkg/web.js", "application/javascript")
-        "/pkg/web_bg.wasm" -> serve_file!("tests/app/www/pkg/web_bg.wasm", "application/wasm")
-        "/carousel.css" -> serve_file!("carousel.css", "text/css")
-        _ -> Ok({ status: 404, headers: [], body: Str.to_utf8("Not found") })
+    uri = request.uri
+    if uri == "/" then
+        serve_app!({})
+    else if uri == "/carousel.css" then
+        serve_file!("carousel.css", "text/css")
+    else if Str.starts_with(uri, "/pkg/") and !(Str.contains(uri, "..")) then
+        serve_file!(Str.concat("tests/app/www", uri), content_type_for(uri))
+    else
+        Ok({ status: 404, headers: [], body: Str.to_utf8("Not found") })
+
+content_type_for : Str -> Str
+content_type_for = |path|
+    if Str.ends_with(path, ".wasm") then
+        "application/wasm"
+    else if Str.ends_with(path, ".js") then
+        "application/javascript"
+    else
+        "application/octet-stream"
 
 serve_app! : {} => Result Response [ServerErr Str]_
 serve_app! = |{}|
@@ -58,13 +70,15 @@ render_page = |flags|
                         div([id("app")], []),
                         script(
                             [type("module")],
-                            [Html.text(
-                                """
-                                import init, { run } from '/pkg/web.js';
-                                await init();
-                                run('${flags}');
-                                """
-                            )],
+                            [
+                                Html.text(
+                                    """
+                                    import init, { run } from '/pkg/web.js';
+                                    await init();
+                                    run('${flags}');
+                                    """,
+                                ),
+                            ],
                         ),
                     ],
                 ),
