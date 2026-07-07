@@ -1,6 +1,6 @@
 app [Model, init!, respond!] {
     pf: platform "https://github.com/growthagent/basic-webserver/releases/download/0.15.0/HUvmkDBBkVzixg3f4HuJvb4KfEOpRlY4MS_JRbhbna8.tar.br",
-    html: "https://github.com/niclas-ahden/joy-html/releases/download/0.13.0/D8dlKh8s_ZJeGZt5U_aeAx9b3KOBSady2jIGX_9of2Q.tar.br",
+    html: "https://github.com/niclas-ahden/joy-html/releases/download/0.14.0/IVK93mBqjterEFSYijs67Dkl1rYfu0qGl4PAhSPGET0.tar.br",
     shared: "../shared/main.roc",
 }
 
