@@ -1,15 +1,15 @@
 # joy-carousel
 
-A carousel/slider component for [Joy](https://github.com/growthagent/joy) applications. Supports touch and mouse drag gestures, navigation buttons, wrap-around, and slide or fade transitions, and follows the WAI-ARIA carousel pattern.
+A carousel/slider component for [Joy](https://github.com/niclas-ahden/joy) applications. Supports touch and mouse drag gestures, navigation buttons, wrap-around, and slide or fade transitions, and follows the WAI-ARIA carousel pattern.
 
 ## Example usage
 
 ```roc
 app [Model, Msg, init, update, render, subscriptions] {
-    pf: platform "https://github.com/growthagent/joy/releases/download/0.35.0-rc9/2yydGvQk97CxaEKptca8DcQ2XRmJv9oeUUvkV6SCEs2f.tar.zst",
+    pf: platform "https://github.com/niclas-ahden/joy/releases/download/0.35.0/FtRCTy7CSPSdS2vLzGJPwYfcGurQfoaADXPNT8aJBBCr.tar.zst",
     # Must be the same joy-html release the Joy platform uses, see "Requirements" below
-    html: "https://github.com/growthagent/joy-html/releases/download/0.18.0-rc2/6XAQypURmG12GNMHHZmjcXVGtctYy52mmPZoaUMWejRK.tar.zst",
-    carousel: "https://github.com/growthagent/joy-carousel/releases/download/0.8.0-rc3/7x5RVYKwyZQpQEugFbZdQMKaZEjQLjGKEzGuMQFfAitf.tar.zst",
+    html: "https://github.com/niclas-ahden/joy-html/releases/download/0.18.0/6XAQypURmG12GNMHHZmjcXVGtctYy52mmPZoaUMWejRK.tar.zst",
+    carousel: "https://github.com/niclas-ahden/joy-carousel/releases/download/0.8.0/9FR5dheLRdURWWECifu1urp2Bu5Jehd6FyGAEyiBWjwy.tar.zst",
 }
 
 import html.Html exposing [div, text]
@@ -125,10 +125,10 @@ The track moves left to right, so a carousel inside a right-to-left page
 
 ## Requirements
 
-- The [Joy](https://github.com/growthagent/joy) platform.
-- [joy-html](https://github.com/growthagent/joy-html) for HTML rendering. Your
+- The [Joy](https://github.com/niclas-ahden/joy) platform.
+- [joy-html](https://github.com/niclas-ahden/joy-html) for HTML rendering. Your
   app must depend on the exact joy-html release URL that the Joy platform and
-  this package use (currently 0.17.0). With any other URL the carousel's `Html`
+  this package use (currently 0.18.0). With any other URL the carousel's `Html`
   is a different type than the one your app's `render` has to return.
 
 ## Documentation
